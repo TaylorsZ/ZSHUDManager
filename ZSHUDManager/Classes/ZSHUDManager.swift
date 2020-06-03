@@ -51,7 +51,7 @@ open class ZSHUDManager: NSObject {
         
     }
     
-    private func dismiss() {
+    public func dismiss() {
         
         if ZSContentViewType.loading == currentView?.type && count - 1 > 0 {
             count -= 1
