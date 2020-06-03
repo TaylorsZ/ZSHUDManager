@@ -7,12 +7,18 @@
 //
 
 import UIKit
-
+import ZSHUDManager
 class ViewController: UIViewController {
 
     override func viewDidLoad() {
         super.viewDidLoad()
-        // Do any additional setup after loading the view, typically from a nib.
+        
+    }
+    override func viewDidAppear(_ animated: Bool) {
+        super.viewDidAppear(animated)
+//        ZSHUD.showDone("斤斤计较军")
+        ZSHUD.loadingAnimationImages = ["234.png"]
+         ZSHUD.showLoading(tip: "接济接济")
     }
 
     override func didReceiveMemoryWarning() {
