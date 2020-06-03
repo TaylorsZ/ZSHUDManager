@@ -20,8 +20,8 @@ extension ZSBaseContentView {
     func imageWithName(_ name:String) -> UIImage? {
         var image = UIImage(named: name)
         if image == nil {
-            
-            image = UIImage(named: name, in: Bundle.init(for: ZSBaseContentView.self), compatibleWith: nil)
+            let path = Bundle.init(for: ZSHUDManager.self)
+            image = UIImage(named: name, in: path, compatibleWith: nil)
         }
         return image
     }

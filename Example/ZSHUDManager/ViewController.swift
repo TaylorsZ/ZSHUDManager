@@ -16,9 +16,9 @@ class ViewController: UIViewController {
     }
     override func viewDidAppear(_ animated: Bool) {
         super.viewDidAppear(animated)
-//        ZSHUD.showDone("斤斤计较军")
-        ZSHUD.loadingAnimationImages = ["234.png"]
-         ZSHUD.showLoading(tip: "接济接济")
+        ZSHUD.showDone("斤斤计较军")
+//        ZSHUD.loadingAnimationImages = ["234.png"]
+//         ZSHUD.showLoading(tip: "接济接济")
     }
 
     override func didReceiveMemoryWarning() {

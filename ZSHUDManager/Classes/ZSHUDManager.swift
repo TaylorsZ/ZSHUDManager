@@ -76,11 +76,11 @@ open class ZSHUDManager: NSObject {
         
     }
     open func showLoading() {
-        return showLoading(tip: nil, sub: nil)
+        showLoading(tip: nil, sub: nil)
     }
     
     open func showLoading(tip: String?) {
-        return showLoading(tip: tip, sub: nil)
+        showLoading(tip: tip, sub: nil)
     }
     
     open func showLoading(tip: String?, sub: String?) {
@@ -148,23 +148,23 @@ open class ZSHUDManager: NSObject {
     
     // MARK: - *************** 提示信息 ***************
     open func show(_ msg: String?) {
-        return show(msg, type: .default)
+        show(msg, type: .default)
     }
     
     open func showDone(_ msg: String?) {
-        return show(msg, type: .done)
+        show(msg, type: .done)
     }
     
     open func showFail(_ msg: String?) {
-        return show(msg, type: .fail)
+        show(msg, type: .fail)
     }
     
     open func showWarning(_ msg: String?) {
-        return show(msg, type: .warning)
+        show(msg, type: .warning)
     }
     
     open func show(_ msg: String?, type: ZSMsgType) {
-        return show(msg: msg, type: type, complete: nil)
+        show(msg: msg, type: type, complete: nil)
     }
     
     open func show(msg:String?,type:ZSMsgType,complete:(()->())?) {
