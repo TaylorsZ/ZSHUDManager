@@ -26,7 +26,7 @@ extension ZSBaseContentView {
         setConstraint()
 
         timer = Timer(timeInterval: TimeInterval(kZSLoadingDelayTime), target: self, selector: #selector(dismiss), userInfo: nil, repeats: false)
-        RunLoop.current.add(timer!, forMode: RunLoopMode.commonModes)
+        RunLoop.current.add(timer!, forMode: RunLoop.Mode.common)
         
     }
     func setTip(_ tip: String?, sub: String?) {
@@ -36,7 +36,7 @@ extension ZSBaseContentView {
         timer?.invalidate()
         timer = nil
         timer = Timer(timeInterval: TimeInterval(kZSLoadingDelayTime), target: self, selector: #selector(dismiss), userInfo: nil, repeats: false)
-        RunLoop.current.add(timer!, forMode: RunLoopMode.commonModes)
+        RunLoop.current.add(timer!, forMode: RunLoop.Mode.common)
     }
     func toBeLoading(withTip tip: String?, sub: String?) {
         if type != .loading {
@@ -59,7 +59,7 @@ extension ZSBaseContentView {
 
             timer?.invalidate()
             timer = Timer(timeInterval: TimeInterval(kZSLoadingDelayTime), target: self, selector: #selector(dismiss), userInfo: nil, repeats: false)
-            RunLoop.current.add(timer!, forMode: RunLoopMode.commonModes)
+            RunLoop.current.add(timer!, forMode: RunLoop.Mode.common)
         }
 
     }
@@ -87,7 +87,7 @@ extension ZSBaseContentView {
             return aniImageView
         } else {
             let loadingView = UIActivityIndicatorView()
-            loadingView.activityIndicatorViewStyle = .whiteLarge
+            loadingView.style = .whiteLarge
             loadingView.color = ZSHEXCOLOR(kZSLoadingColor)
             loadingView.hidesWhenStopped = true
             loadingView.startAnimating()

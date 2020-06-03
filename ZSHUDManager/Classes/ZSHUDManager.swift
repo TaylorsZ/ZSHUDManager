@@ -40,12 +40,11 @@ open class ZSHUDManager: NSObject {
     override private init() {
         super.init()
         //create window
-        let window = UIWindow(frame: UIScreen.main.bounds)
+        let window = UIWindow.init(frame: UIScreen.main.bounds)
         window.makeKeyAndVisible()
         window.backgroundColor = UIColor.clear
         
-        //            window.windowLevel = UIWindow.Level.alert + 1
-        window.windowLevel =  100
+        window.windowLevel =  UIWindow.Level.alert + 1
         window.isUserInteractionEnabled = false
         window.rootViewController = ZSBaseProgressViewController()
         self.window = window

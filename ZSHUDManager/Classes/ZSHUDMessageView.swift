@@ -53,7 +53,7 @@ extension ZSBaseContentView {
     func creatTimer() {
         timer?.invalidate()
         timer = Timer(timeInterval: TimeInterval(kZSMessageDelayTime), target: self, selector: #selector(dismiss), userInfo: nil, repeats: false)
-        RunLoop.main.add(timer!, forMode: RunLoopMode.defaultRunLoopMode)
+        RunLoop.main.add(timer!, forMode: RunLoop.Mode.default)
     }
     func setMsg(_ msg: String?, type: ZSMsgType) {
         
