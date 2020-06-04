@@ -15,8 +15,8 @@ class ViewController: UIViewController {
 //        ZSHUD.config.alpha = 0.6
     }
     @IBAction func show(_ sender: UIButton) {
-//        ZSHUD.show("这是测试\n嗯")
-        ZSHUD.showLoading(tip: "接济接济")
+        ZSHUD.show("这是测试\n嗯")
+//        ZSHUD.showLoading(tip: "接济接济")
       
     }
     override func viewDidAppear(_ animated: Bool) {

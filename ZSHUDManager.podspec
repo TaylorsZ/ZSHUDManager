@@ -8,7 +8,7 @@
 
 Pod::Spec.new do |s|
   s.name             = 'ZSHUDManager'
-  s.version          = '0.2.3'
+  s.version          = '0.2.4'
   s.summary          = '提示框'
 
 # This description is used to generate tags and improve search results.
@@ -31,7 +31,7 @@ Pod::Spec.new do |s|
   s.ios.deployment_target = '10.0'
 
   s.source_files = 'ZSHUDManager/Classes/**/*'
-  s.resources = "ZSHUDManager/Assets/*.bundle"
+  s.resources = "ZSHUDManager/ZSHUDManager/Assets/*.bundle"
   s.swift_version = '5.0'
   # s.resource_bundles = {
   #   'ZSHUDManager' => ['ZSHUDManager/Assets/*.png']
