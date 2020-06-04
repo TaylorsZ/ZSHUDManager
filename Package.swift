@@ -21,7 +21,8 @@ let package = Package(
         .target(
             name: "ZSHUDManager",
             dependencies: [],
-            path: "ZSHUDManager"
-         ),
+            path: "ZSHUDManager/ZSHUDManager",
+            sources : ["ZSHUDManager/ZSHUDManager/Assets/*.bundle"]
+         )
     ]
 )
