@@ -1,11 +1,10 @@
-use_frameworks!
+#use_frameworks!
 
 target 'ZSHUDManager_Example' do
   pod 'ZSHUDManager', :path => '../'
 
   target 'ZSHUDManager_Tests' do
     inherit! :search_paths
-
     
   end
 end
