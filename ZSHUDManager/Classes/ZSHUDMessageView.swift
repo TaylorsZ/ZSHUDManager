@@ -17,25 +17,41 @@ extension ZSBaseContentView {
         creatTimer()
         
     }
-    func imageWithName(_ name:String) -> UIImage? {
-        var image = UIImage(named: name)
-        if image == nil {
-            let path = Bundle.init(for: ZSHUDManager.self)
-            image = UIImage(named: name, in: path, compatibleWith: nil)
+    func image(name:String,type:String) -> UIImage? {
+        let mainBundlePath = Bundle.main.bundlePath
+        var bundlePath = "\(mainBundlePath)/\("ZSProgressHUD.bundle")"
+        var bundle = Bundle(path: bundlePath)
+        if bundle == nil {
+            bundlePath = "\(mainBundlePath)/\("Frameworks/ZSHUDManager.framework/ZSProgressHUD.bundle")"
+            bundle = Bundle(path: bundlePath)
         }
-        return image
+        if UIImage.responds(to: #selector(UIImage.init(named:in:compatibleWith:))) {
+            return UIImage(named: name , in: bundle, compatibleWith: nil)
+        } else {
+            
+            if let path = bundle?.path(forResource: name, ofType: type) {
+                return UIImage(contentsOfFile: path)
+            }else{
+                return nil
+            }
+            
+        }
     }
     func getImageName(type:ZSMsgType) -> String {
         var pathString = ""
         switch type {
         case .done:
-            pathString = "ZSProgressHUD.bundle/done"
+            pathString = "success"
+            break
         case .fail:
-            pathString = "ZSProgressHUD.bundle/fail"
+            pathString = "fail"
+            break
         case .warning:
-            pathString = "ZSProgressHUD.bundle/warning"
+            pathString = "warning"
+            break
         case .default:
-            pathString = "ZSProgressHUD.bundle/done"
+            pathString = "tip"
+            break
         }
         return pathString
     }
@@ -44,28 +60,27 @@ extension ZSBaseContentView {
         let pathString = getImageName(type: type)
         
         let iconImageView = UIImageView()
-        iconImageView.image = imageWithName(pathString)
-        iconImageView.tintColor = ZSHEXCOLOR(kZSImageColor)
+        iconImageView.image = image(name: pathString, type: "png")
+        iconImageView.tintColor = ZSHUD.config.imageColor
         self.addSubview(iconImageView)
         self.topView = iconImageView
         self.setConstraint()
     }
     func creatTimer() {
         timer?.invalidate()
-        timer = Timer(timeInterval: TimeInterval(kZSMessageDelayTime), target: self, selector: #selector(dismiss), userInfo: nil, repeats: false)
+        timer = Timer(timeInterval: TimeInterval(ZSHUD.config.messageDelay), target: self, selector: #selector(dismiss), userInfo: nil, repeats: false)
         RunLoop.main.add(timer!, forMode: RunLoop.Mode.default)
     }
     func setMsg(_ msg: String?, type: ZSMsgType) {
         
         let pathString = getImageName(type: type)
         
-        if let imageIV:UIImageView = topView as? UIImageView {
+        if let imageIV:UIImageView = topView as? UIImageView , let image = image(name: pathString, type: "png")?.withRenderingMode(.alwaysTemplate){
             
-            let image = imageWithName(pathString)?.withRenderingMode(.alwaysTemplate)
             imageIV.image  = image
             mainLabel?.text = msg
             self.setConstraint()
-            UIView.animate(withDuration: TimeInterval(kZSDefaultAnimationTime)) {
+            UIView.animate(withDuration: TimeInterval(ZSHUD.config.animationTime)) {
                 self.layoutIfNeeded()
             }
             creatTimer()
@@ -86,12 +101,11 @@ extension ZSBaseContentView {
             button?.isHidden = true
             
             topView?.layoutIfNeeded()
-            UIView.animate(withDuration: TimeInterval(kZSDefaultAnimationTime)) {
+            UIView.animate(withDuration: ZSHUD.config.animationTime) {
                 self.layoutIfNeeded()
             }
             
-            
-            DispatchQueue.main.asyncAfter(deadline: DispatchTime.now() + Double(Int64(kZSMessageDelayTime * CGFloat(NSEC_PER_SEC))) / Double(NSEC_PER_SEC), execute: { [unowned self] in
+            DispatchQueue.main.asyncAfter(deadline: DispatchTime.now() + ZSHUD.config.messageDelay) { [unowned self] in
                 self.topView?.removeFromSuperview()
                 self.type = .loading
                 if oldView != nil {
@@ -109,8 +123,8 @@ extension ZSBaseContentView {
                 if complete != nil {
                     complete!()
                 }
-                
-            })
+            }
+            
             
             
         }

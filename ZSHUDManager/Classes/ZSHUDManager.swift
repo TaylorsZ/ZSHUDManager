@@ -19,8 +19,8 @@ open class ZSHUDManager: NSObject {
     
     private var complete:(()->())?
     private var cancled:(()->())?
-    public var loadingAnimationImages: [String] = []
     
+    public var config:ZSHUDConfig!
     private static var _sharedInstance: ZSHUDManager?
     
     fileprivate class func sharedInstance() -> ZSHUDManager {
@@ -48,14 +48,18 @@ open class ZSHUDManager: NSObject {
         window.isUserInteractionEnabled = false
         window.rootViewController = ZSBaseProgressViewController()
         self.window = window
-        
+        self.config = ZSHUDConfig()
+        NotificationCenter.default.addObserver(self, selector: #selector(dismiss), name: NSNotification.Name.init(kZSDismissNotification), object: nil)
     }
     
-    public func dismiss() {
+    open func changLoadingDismissTime() {
+        
+    }
+    @objc public func dismiss() {
         
         if ZSContentViewType.loading == currentView?.type && count - 1 > 0 {
             count -= 1
-            print("not dismiss, current count is %@", NSNumber(value: count))
+//            print("无需关闭, 当前 %@ ：\(count)")
             return
         }
         
@@ -123,10 +127,6 @@ open class ZSHUDManager: NSObject {
                 view.button?.addTarget(self, action: #selector(self.cancleProgress(sender:)), for: .touchUpInside)
             }
         })
-        
-        
-        
-        
     }
     @objc
     private func cancleProgress(sender:UIButton) {
@@ -151,7 +151,7 @@ open class ZSHUDManager: NSObject {
         show(msg, type: .default)
     }
     
-    open func showDone(_ msg: String?) {
+    open func showSuccess(_ msg: String?) {
         show(msg, type: .done)
     }
     
