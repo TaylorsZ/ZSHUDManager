@@ -224,8 +224,11 @@ open class ZSHUDManager: NSObject {
 }
 
 extension ZSHUDManager {
-    open func showNavSuccess(_ str:String) {
+    open func  nav_showSuccess(_ str:String) {
         showNavInfo(str, type: .done)
+    }
+    open func nav_showFail(_ str:String) {
+        showNavInfo(str, type: .fail)
     }
     func showNavInfo(_ str:String,type:ZSMsgType) {
        
