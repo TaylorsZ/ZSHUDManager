@@ -30,10 +30,10 @@ extension ZSBaseContentView {
         
     }
     func creatLoadingTimer() {
-         timer?.invalidate()
+        timer?.invalidate()
         timer = nil
         timer = Timer(timeInterval: ZSHUD.config.loadingDelay, target: self, selector: #selector(dismiss), userInfo: nil, repeats: false)
-               RunLoop.current.add(timer!, forMode: RunLoop.Mode.common)
+        RunLoop.current.add(timer!, forMode: RunLoop.Mode.common)
     }
     func setTip(_ tip: String?, sub: String?) {
         mainLabel?.text = tip

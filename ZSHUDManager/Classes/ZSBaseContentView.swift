@@ -139,7 +139,7 @@ class ZSBaseContentView: UIView {
             NotificationCenter.default.post(name: NSNotification.Name(rawValue: kZSDismissNotification), object: nil)
         }
     }
-    deinit {
-        print( "\(self)" + "\(#function)")
-    }
+//    deinit {
+//        print( "\(self)" + "\(#function)")
+//    }
 }

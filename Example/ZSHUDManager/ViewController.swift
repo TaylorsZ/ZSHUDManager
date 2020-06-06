@@ -17,7 +17,7 @@ class ViewController: UIViewController {
     @IBAction func show(_ sender: UIButton) {
         ZSHUD.show("这是测试\n嗯")
 //        ZSHUD.showLoading(tip: "接济接济")
-      
+        ZSHUD.showNavSuccess("哈哈哈哈哈哈哈")
     }
     override func viewDidAppear(_ animated: Bool) {
         super.viewDidAppear(animated)

@@ -13,6 +13,8 @@ public let ZSHUD = ZSHUDManager.sharedInstance()
 open class ZSHUDManager: NSObject {
     
     private var window:UIWindow?
+    private var navWindow:UIWindow!
+    private var navBar:UIButton?
     private var firstResponder:UIView?
     private var count:Int = 0
     private var currentView:ZSBaseContentView?
@@ -30,8 +32,6 @@ open class ZSHUDManager: NSObject {
         }
         return instance
     }
-    
-    
     //销毁单例对象
     class func destroy() {
         _sharedInstance = nil
@@ -48,6 +48,18 @@ open class ZSHUDManager: NSObject {
         window.isUserInteractionEnabled = false
         window.rootViewController = ZSBaseProgressViewController()
         self.window = window
+        
+        let window2 = UIWindow.init(frame: UIScreen.main.bounds)
+        window2.makeKeyAndVisible()
+        window2.backgroundColor = UIColor.clear
+        
+        window2.windowLevel =  UIWindow.Level.alert + 2
+        window2.isUserInteractionEnabled = false
+        window2.rootViewController = ZSBaseProgressViewController()
+        self.navWindow = window2
+        
+        
+        
         self.config = ZSHUDConfig()
         NotificationCenter.default.addObserver(self, selector: #selector(dismiss), name: NSNotification.Name.init(kZSDismissNotification), object: nil)
     }
@@ -66,6 +78,7 @@ open class ZSHUDManager: NSObject {
         OperationQueue.main.addOperation({ [unowned self] in
             self.window?.isHidden = true
             self.window?.isUserInteractionEnabled = false
+            
             if self.currentView != nil {
                 self.count = 0
                 self.currentView?.dismiss()
@@ -110,22 +123,24 @@ open class ZSHUDManager: NSObject {
                 default:
                     break
                 }
+            }else{
+                var show = false
+                if cancle != nil {
+                    self.cancled = cancle
+                    show = true
+                }
+                let view = ZSBaseContentView()
+                view.start(tip: tip, sub: sub, showCancle: show)
+                self.window?.addSubview(view)
+                
+                self.currentView = view
+                if show {
+                    view.button?.addTarget(self, action: #selector(self.cancleProgress(sender:)), for: .touchUpInside)
+                }
             }
             
             
-            var show = false
-            if cancle != nil {
-                self.cancled = cancle
-                show = true
-            }
-            let view = ZSBaseContentView()
-            view.start(tip: tip, sub: sub, showCancle: show)
-            self.window?.addSubview(view)
-            
-            self.currentView = view
-            if show {
-                view.button?.addTarget(self, action: #selector(self.cancleProgress(sender:)), for: .touchUpInside)
-            }
+           
         })
     }
     @objc
@@ -191,14 +206,83 @@ open class ZSHUDManager: NSObject {
                 default:
                     break
                 }
+            }else{
+                let msgView = ZSBaseContentView()
+                msgView.start(msg: msg, type: type)
+                self.window?.addSubview(msgView)
+                self.currentView = msgView
             }
             
             
-            let msgView = ZSBaseContentView()
-            msgView.start(msg: msg, type: type)
-            self.window?.addSubview(msgView)
-            self.currentView = msgView
+            
         })
     }
+    deinit {
+        NotificationCenter.default.removeObserver(self)
+    }
     
+}
+
+extension ZSHUDManager {
+    open func showNavSuccess(_ str:String) {
+        showNavInfo(str, type: .done)
+    }
+    func showNavInfo(_ str:String,type:ZSMsgType) {
+       
+        let button = UIButton.init(type: .custom)
+        switch type {
+        case .fail:
+            button.backgroundColor = .red
+        case .done:
+            button.backgroundColor = ZSHEXCOLOR(0x003a6c)
+            
+        default:
+            button.backgroundColor = .red
+        }
+        let navH = ZSHUD.config.navBarHeight
+        button.frame = CGRect.init(x: 0, y: 0, width: self.navWindow.frame.size.width, height: navH!)
+        button.setTitle(str, for: .normal)
+        button.titleLabel?.font = UIFont.boldSystemFont(ofSize: 15)
+        self.navWindow?.addSubview(button)
+
+        //布局
+//        button.removeAllAutoLayout()
+//        button.addConstraint(.height, value: navH!)
+//        button.addConstraint(.top, equalTo: self.navWindow, offset: 0)
+//        button.addConstraint(.leading, equalTo: self.navWindow, offset: 0)
+//        button.addConstraint(.trailing, equalTo: self.navWindow, offset: 0)
+//        self.navBar = button
+//        UIView.animate(withDuration: ZSHUD.config.animationNavTime, animations: {
+//            button.layoutIfNeeded()
+//        })
+        navDisMiss()
+        
+    }
+    func navDisMiss() {
+        DispatchQueue.main.asyncAfter(deadline: DispatchTime.now() + ZSHUD.config.messageDelay) { [unowned self] in
+//            if let constraints = self.navBar?.constraints{
+//                for con in constraints {
+//                    if con.firstAttribute == .height  {
+//                        con.constant = 0
+//                        break
+//                    }
+//                }
+//            }
+//            self.navBar?.setNeedsLayout()
+            UIView.animate(withDuration: ZSHUD.config.animationNavTime, animations: {
+                for view in self.navWindow.subviews {
+                    view.frame.origin.y = -ZSHUD.config.navBarHeight
+                }
+                
+            }) { [unowned self] (finshed) in
+                
+                for view in self.navWindow.subviews {
+                    view.removeFromSuperview()
+                }
+                self.navBar = nil
+            }
+           
+
+        }
+    }
 }

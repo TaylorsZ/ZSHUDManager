@@ -65,7 +65,8 @@ open class ZSHUDConfig: NSObject {
     public var contentMaxWidth:CGFloat!
     /// 最小宽度
     public var contentMinWidth:CGFloat!
-    
+    /// nav 高
+    public var navBarHeight:CGFloat!
     
     /// 加载消失时长
     public var loadingDelay:TimeInterval!
@@ -73,7 +74,8 @@ open class ZSHUDConfig: NSObject {
     public var messageDelay:TimeInterval!
     /// 动画时长
     public var animationTime:TimeInterval!
-    
+    /// 动画时长
+    public var animationNavTime:TimeInterval!
     /// 默认加载提示
     public var loadingDefaultTips:String?
     
@@ -98,7 +100,9 @@ open class ZSHUDConfig: NSObject {
         self.loadingDelay = 6000.0
         self.messageDelay = 1.5
         self.animationTime = 0.15
+        self.animationNavTime = 0.5
         self.loadingDefaultTips = "加载中..."
+        self.navBarHeight = 40
     }
     
     
