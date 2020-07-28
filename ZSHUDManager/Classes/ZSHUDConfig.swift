@@ -78,9 +78,10 @@ open class ZSHUDConfig: NSObject {
     public var animationNavTime:TimeInterval!
     /// 默认加载提示
     public var loadingDefaultTips:String?
-    
     /// 加载动画
     public var loadingImages:[String]?
+    /// 状态栏显示,默认隐藏
+    public var statusBarHidden:Bool!
     override init() {
 //        super.init()
         self.bgColor = ZSHEXCOLOR(0x000000)
@@ -103,6 +104,7 @@ open class ZSHUDConfig: NSObject {
         self.animationNavTime = 0.5
         self.loadingDefaultTips = "加载中..."
         self.navBarHeight = 40
+        self.statusBarHidden = true
     }
     
     

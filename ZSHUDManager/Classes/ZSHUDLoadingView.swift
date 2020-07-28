@@ -8,7 +8,7 @@
 import UIKit
 
 extension ZSBaseContentView {
-
+    
     func start(tip:String?,sub:String?,showCancle:Bool) {
         self.type = .loading
         self.showCancle = showCancle
@@ -17,57 +17,56 @@ extension ZSBaseContentView {
         topView = loadingView
         var tips = tip
         if (tips == nil || tips?.count == 0) {
-            tips = ZSHUD.config.loadingDefaultTips
+            tips = ZSHUDManager.shared().config.loadingDefaultTips
         }
-       
-
+        
+        
         mainLabel?.text = tips
         subLabel?.text = sub
         setConstraint()
-
-       creatLoadingTimer()
-      
+        creatLoadingTimer()
+        
         
     }
     func creatLoadingTimer() {
         timer?.invalidate()
         timer = nil
-        timer = Timer(timeInterval: ZSHUD.config.loadingDelay, target: self, selector: #selector(dismiss), userInfo: nil, repeats: false)
+        timer = Timer(timeInterval: ZSHUDManager.shared().config.loadingDelay, target: self, selector: #selector(dismiss), userInfo: nil, repeats: false)
         RunLoop.current.add(timer!, forMode: RunLoop.Mode.common)
     }
-    func setTip(_ tip: String?, sub: String?) {
+    func setTip(_ tip: String?, sub: String? ,cancle:Bool) {
         mainLabel?.text = tip
         subLabel?.text = sub
+        showCancle = cancle
         resetConstraint()
-        
         creatLoadingTimer()
     }
     func toBeLoading(withTip tip: String?, sub: String?) {
         if type != .loading {
             self.type = .loading
-
+            
             topView?.removeFromSuperview()
-
+            
             //创建loading
             let loadingView = self.loadingView()
             addSubview(loadingView)
-
+            
             topView = loadingView
             mainLabel?.text = tip
             subLabel?.text = sub
             setConstraint()
             topView?.layoutIfNeeded()
-            UIView.animate(withDuration: ZSHUD.config.animationTime, animations: {
+            UIView.animate(withDuration: ZSHUDManager.shared().config.animationTime, animations: {
                 self.layoutIfNeeded()
             })
-
+            
             creatLoadingTimer()
         }
-
+        
     }
     func loadImages() -> [UIImage] {
-
-        guard let images = ZSHUD.config.loadingImages else {
+        
+        guard let images = ZSHUDManager.shared().config.loadingImages else {
             return []
         }
         var imagesM: [UIImage] = []
@@ -82,7 +81,7 @@ extension ZSBaseContentView {
     }
     func loadingView() -> UIView{
         
-        if let images = ZSHUD.config.loadingImages, images.count > 0 {
+        if let images = ZSHUDManager.shared().config.loadingImages, images.count > 0 {
             let aniImageView = UIImageView(frame: CGRect(x: 0, y: 0, width: 40, height: 40))
             aniImageView.animationImages = loadImages()
             aniImageView.animationDuration = 1
@@ -92,14 +91,14 @@ extension ZSBaseContentView {
         } else {
             let loadingView = UIActivityIndicatorView()
             loadingView.style = .whiteLarge
-            loadingView.color = ZSHUD.config.loadingColor
+            loadingView.color = ZSHUDManager.shared().config.loadingColor
             loadingView.hidesWhenStopped = true
             loadingView.startAnimating()
             return loadingView
         }
-
+        
     }
     
-
-
+    
+    
 }

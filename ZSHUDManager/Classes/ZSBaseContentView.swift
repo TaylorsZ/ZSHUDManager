@@ -20,37 +20,36 @@ class ZSBaseContentView: UIView {
   
     override init(frame: CGRect) {
         super.init(frame: frame)
-        self.backgroundColor =  ZSHUD.config.bgColor
+        self.backgroundColor =  ZSHUDManager.shared().config.bgColor
         layer.cornerRadius = 5.0
         layer.shadowOffset = CGSize.zero
         layer.shadowOpacity = 0.2
         self.alpha = 0
-        
         let mainLabel = UILabel()
         mainLabel.textAlignment = .center
         mainLabel.lineBreakMode = .byCharWrapping
-        mainLabel.textColor = ZSHUD.config.tipColor
-        mainLabel.font = ZSHUD.config.tipFont
+        mainLabel.textColor = ZSHUDManager.shared().config.tipColor
+        mainLabel.font = ZSHUDManager.shared().config.tipFont
         addSubview(mainLabel)
-        mainLabel.preferredMaxLayoutWidth = ZSHUD.config.textMaxWidth
+        mainLabel.preferredMaxLayoutWidth = ZSHUDManager.shared().config.textMaxWidth
         mainLabel.numberOfLines = 0
         self.mainLabel = mainLabel
         
         let subLabel = UILabel()
         subLabel.lineBreakMode = .byCharWrapping
         subLabel.textAlignment = .center
-        subLabel.textColor = ZSHUD.config.subColor
-        subLabel.font = ZSHUD.config.subFont
+        subLabel.textColor = ZSHUDManager.shared().config.subColor
+        subLabel.font = ZSHUDManager.shared().config.subFont
         addSubview(subLabel)
-        subLabel.preferredMaxLayoutWidth = ZSHUD.config.textMaxWidth
+        subLabel.preferredMaxLayoutWidth = ZSHUDManager.shared().config.textMaxWidth
         subLabel.numberOfLines = 0
         self.subLabel = subLabel
         
         let button = UIButton(type: .custom)
         button.setTitle("取消", for: .normal)
-        button.setTitleColor(ZSHUD.config.buttonColor, for: .normal)
-        button.titleLabel?.font = ZSHUD.config.btFont
-        button.layer.borderColor = ZSHUD.config.buttonColor.cgColor
+        button.setTitleColor(ZSHUDManager.shared().config.buttonColor, for: .normal)
+        button.titleLabel?.font = ZSHUDManager.shared().config.btFont
+        button.layer.borderColor = ZSHUDManager.shared().config.buttonColor.cgColor
         button.layer.borderWidth = 1
         addSubview(button)
         self.button = button
@@ -62,13 +61,13 @@ class ZSBaseContentView: UIView {
     
     func resetConstraint() {
         setConstraint()
-        UIView.animate(withDuration: ZSHUD.config.animationTime, animations: {
+        UIView.animate(withDuration: ZSHUDManager.shared().config.animationTime, animations: {
             self.layoutIfNeeded()
         })
     }
     func setConstraint() {
         self.removeAllAutoLayout()
-        let padding = ZSHUD.config.padding
+        let padding = ZSHUDManager.shared().config.padding
         
         if topView != nil {
             if mainLabel?.text?.count == 0 && subLabel?.text?.count == 0 {
@@ -90,14 +89,17 @@ class ZSBaseContentView: UIView {
         }
         if type == .loading {
             if button != nil && showCancle {
+                button?.isHidden = false
                 button?.addConstraint(NSLayoutConstraint.Attribute.top, equalTo: subLabel, fromConstraint: NSLayoutConstraint.Attribute.bottom, offset: padding! / 2)
                 button?.addConstraint(NSLayoutConstraint.Attribute.left, equalTo: self, offset: padding!)
                 button?.addConstraint(NSLayoutConstraint.Attribute.right, equalTo: self, offset: -padding!)
+            }else{
+                button?.isHidden = true
             }
         }
-        addConstraint(NSLayoutConstraint.Attribute.width, greatOrLess: NSLayoutConstraint.Relation.greaterThanOrEqual, value: ZSHUD.config.contentMinWidth)
-        addConstraint(NSLayoutConstraint.Attribute.width, greatOrLess: NSLayoutConstraint.Relation.lessThanOrEqual, value: ZSHUD.config.contentMaxWidth)
-        addConstraint(NSLayoutConstraint.Attribute.height, greatOrLess: NSLayoutConstraint.Relation.greaterThanOrEqual, value: ZSHUD.config.contentMinWidth)
+        addConstraint(NSLayoutConstraint.Attribute.width, greatOrLess: NSLayoutConstraint.Relation.greaterThanOrEqual, value: ZSHUDManager.shared().config.contentMinWidth)
+        addConstraint(NSLayoutConstraint.Attribute.width, greatOrLess: NSLayoutConstraint.Relation.lessThanOrEqual, value: ZSHUDManager.shared().config.contentMaxWidth)
+        addConstraint(NSLayoutConstraint.Attribute.height, greatOrLess: NSLayoutConstraint.Relation.greaterThanOrEqual, value: ZSHUDManager.shared().config.contentMinWidth)
         
         
         var lastView = topView
@@ -126,20 +128,23 @@ class ZSBaseContentView: UIView {
         addConstraint(NSLayoutConstraint.Attribute.centerY, equalTo: superview, offset: 0)
 
 
-        UIView.animate(withDuration: ZSHUD.config.animationTime, animations: {
-            self.alpha = ZSHUD.config.alpha
+        UIView.animate(withDuration: ZSHUDManager.shared().config.animationTime, animations: {
+            self.alpha = ZSHUDManager.shared().config.alpha
         })
     }
     @objc
     func dismiss() {
-        UIView.animate(withDuration: ZSHUD.config.animationTime, animations: { [weak self] in
-            self?.alpha = 0
+        UIView.animate(withDuration: ZSHUDManager.shared().config.animationTime, animations: { [weak self] in
+            self?.alpha = 0.1
         }) { [weak self] finished in
             self?.removeFromSuperview()
+            self?.timer?.invalidate()
+            self?.timer = nil
             NotificationCenter.default.post(name: NSNotification.Name(rawValue: kZSDismissNotification), object: nil)
         }
+        
     }
-//    deinit {
-//        print( "\(self)" + "\(#function)")
-//    }
+    deinit {
+        print( "\(self)" + "\(#function)")
+    }
 }

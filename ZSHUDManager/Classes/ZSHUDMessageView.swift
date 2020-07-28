@@ -61,14 +61,15 @@ extension ZSBaseContentView {
         
         let iconImageView = UIImageView()
         iconImageView.image = image(name: pathString, type: "png")
-        iconImageView.tintColor = ZSHUD.config.imageColor
+        iconImageView.tintColor = ZSHUDManager.shared().config.imageColor
         self.addSubview(iconImageView)
         self.topView = iconImageView
         self.setConstraint()
     }
     func creatTimer() {
         timer?.invalidate()
-        timer = Timer(timeInterval: TimeInterval(ZSHUD.config.messageDelay), target: self, selector: #selector(dismiss), userInfo: nil, repeats: false)
+        timer = nil
+        timer = Timer(timeInterval: TimeInterval(ZSHUDManager.shared().config.messageDelay), target: self, selector: #selector(dismiss), userInfo: nil, repeats: false)
         RunLoop.main.add(timer!, forMode: RunLoop.Mode.default)
     }
     func setMsg(_ msg: String?, type: ZSMsgType) {
@@ -80,7 +81,7 @@ extension ZSBaseContentView {
             imageIV.image  = image
             mainLabel?.text = msg
             self.setConstraint()
-            UIView.animate(withDuration: TimeInterval(ZSHUD.config.animationTime)) {
+            UIView.animate(withDuration: TimeInterval(ZSHUDManager.shared().config.animationTime)) {
                 self.layoutIfNeeded()
             }
             creatTimer()
@@ -101,25 +102,25 @@ extension ZSBaseContentView {
             button?.isHidden = true
             
             topView?.layoutIfNeeded()
-            UIView.animate(withDuration: ZSHUD.config.animationTime) {
+            UIView.animate(withDuration: ZSHUDManager.shared().config.animationTime) {
                 self.layoutIfNeeded()
             }
             
-            DispatchQueue.main.asyncAfter(deadline: DispatchTime.now() + ZSHUD.config.messageDelay) { [unowned self] in
-                self.topView?.removeFromSuperview()
-                self.type = .loading
+            DispatchQueue.main.asyncAfter(deadline: DispatchTime.now() + ZSHUDManager.shared().config.messageDelay) { [weak self] in
+                self?.topView?.removeFromSuperview()
+                self?.type = .loading
                 if oldView != nil {
-                    self.addSubview(oldView!)
+                    self?.addSubview(oldView!)
                 }
                 
                 if (oldView is UIImageView) {
                     (oldView as? UIImageView)?.startAnimating()
                 }
-                self.topView = oldView
-                self.mainLabel?.text = oldMsg
-                self.subLabel?.isHidden = false
-                self.button?.isHidden = false
-                self.setConstraint()
+                self?.topView = oldView
+                self?.mainLabel?.text = oldMsg
+                self?.subLabel?.isHidden = false
+                self?.button?.isHidden = false
+                self?.setConstraint()
                 if complete != nil {
                     complete!()
                 }

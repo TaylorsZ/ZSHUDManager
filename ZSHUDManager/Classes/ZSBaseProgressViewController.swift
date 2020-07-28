@@ -8,11 +8,12 @@
 import UIKit
 
 class ZSBaseProgressViewController: UIViewController {
-
+    
     override func viewDidLoad() {
         super.viewDidLoad()
-
-    
     }
-    
+    override var prefersStatusBarHidden: Bool {
+//        return true
+        return true
+    }
 }
