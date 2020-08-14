@@ -18,7 +18,6 @@ open class ZSHUDManager: NSObject {
     private var complete:(()->())?
     private var cancled:(()->())?
     
-    public var config:ZSHUDConfig!
     private static var _sharedInstance: ZSHUDManager?
     
     public class func shared() -> ZSHUDManager {
@@ -36,7 +35,6 @@ open class ZSHUDManager: NSObject {
     }
     override private init() {
         super.init()
-        self.config = ZSHUDConfig()
         //create window
         initWindow()
         
@@ -44,21 +42,21 @@ open class ZSHUDManager: NSObject {
     }
     private func initWindow() {
         let window = HUDWindow(frame: UIScreen.main.bounds)
-        window.backgroundColor = UIColor.red.withAlphaComponent(0.5)
+        window.backgroundColor = UIColor.clear
         window.windowLevel =  UIWindow.Level.alert + 1
 //        window.isUserInteractionEnabled = false
         window.rootViewController = ZSBaseProgressViewController()
         window.makeKeyAndVisible()
         self.window = window
         
-//        let window2 = UIWindow(frame: UIScreen.main.bounds)
-//        window2.makeKeyAndVisible()
-//        window2.backgroundColor = UIColor.clear
-//
-//        window2.windowLevel =  UIWindow.Level.alert + 2
-//        window2.isUserInteractionEnabled = false
-//        window2.rootViewController = ZSBaseProgressViewController()
-//        self.navWindow = window2
+        let window2 = UIWindow(frame: UIScreen.main.bounds)
+        window2.makeKeyAndVisible()
+        window2.backgroundColor = UIColor.clear
+
+        window2.windowLevel =  UIWindow.Level.alert + 2
+        window2.isUserInteractionEnabled = false
+        window2.rootViewController = ZSBaseProgressViewController()
+        self.navWindow = window2
     }
     @objc public func dismiss() {
 //        print("当前 %@ ：\(count)")
@@ -89,29 +87,26 @@ open class ZSHUDManager: NSObject {
     }
     open func showLoading(main:String?,sub:String?,cancle:(()->())? = nil) {
         count += 1
-        OperationQueue.main.addOperation({ [weak self] in
-            if let currentV = self?.currentView {
-                switch currentV.type {
-                case .loading:
-                    let show = self?.isShowCancleButton(view: currentV, cancle: cancle)
-                    currentV.setTip(main, sub: sub, cancle: show ?? false)
-                    break
-                case .message:
-                    currentV.toBeLoading(withTip: main, sub: sub)
-                    break
-                default:
-                    break
-                }
-            }else{
-               
-                let view = ZSBaseContentView()
-                let show = self?.isShowCancleButton(view: view, cancle: cancle)
-                view.start(tip: main, sub: sub, showCancle: show ?? false)
-                self?.window?.addSubview(view)
-                self?.currentView = view
-                
+        if let currentV = currentView {
+            switch currentV.type {
+            case .loading:
+                let show = isShowCancleButton(view: currentV, cancle: cancle)
+                currentV.setTip(main, sub: sub, cancle: show)
+                break
+            case .message:
+                currentV.toBeLoading(withTip: main, sub: sub)
+                break
+            default:
+                break
             }
-        })
+        }else{
+            let view = ZSBaseContentView()
+            let show = isShowCancleButton(view: view, cancle: cancle)
+            view.start(tip: main, sub: sub, showCancle: show)
+            window?.addSubview(view)
+            currentView = view
+        }
+
     }
     func isShowCancleButton(view:ZSBaseContentView,cancle:(()->())?) -> Bool {
         guard let can = cancle else {
@@ -131,9 +126,7 @@ open class ZSHUDManager: NSObject {
         currentView?.dismiss()
     }
     open func changeSub(_ sub: String?) {
-        OperationQueue.main.addOperation({ [weak self] in
-            self?.currentView?.subLabel?.text = sub
-        })
+        currentView?.subLabel?.text = sub
     }
 
 
@@ -163,34 +156,32 @@ open class ZSHUDManager: NSObject {
     open func show(msg:String?,type:ZSMsgType,complete:(()->())?) {
         self.complete = complete
         count = 0
-        OperationQueue.main.addOperation({ [weak self] in
-            self?.window?.isHidden = false
-            self?.window?.isUserInteractionEnabled = false
+        window?.isHidden = false
+        window?.isUserInteractionEnabled = false
 
-            if self?.currentView != nil {
-                switch self?.currentView?.type {
-                case .loading:
-                    self?.currentView?.toBeMessage(msg: msg, type: type, complete: {
-                        self?.window?.isUserInteractionEnabled = true
-                        if complete != nil {
-                            complete!()
-                            self?.complete = nil
-                        }
-                    })
-                    break
-                case .message:
-                    self?.currentView?.setMsg(msg, type: type)
-                    break
-                default:
-                    break
-                }
-            }else{
-                let msgView = ZSBaseContentView()
-                msgView.start(msg: msg, type: type)
-                self?.window?.addSubview(msgView)
-                self?.currentView = msgView
+        if currentView != nil {
+            switch currentView?.type {
+            case .loading:
+                currentView?.toBeMessage(msg: msg, type: type, complete: {[weak self] in
+                    self?.window?.isUserInteractionEnabled = true
+                    if complete != nil {
+                        complete!()
+                        self?.complete = nil
+                    }
+                })
+                break
+            case .message:
+                currentView?.setMsg(msg, type: type)
+                break
+            default:
+                break
             }
-        })
+        }else{
+            let msgView = ZSBaseContentView()
+            msgView.start(msg: msg, type: type)
+            window?.addSubview(msgView)
+            currentView = msgView
+        }
     }
     deinit {
         print("销毁\(self)")
@@ -219,7 +210,7 @@ extension ZSHUDManager {
         default:
             button.backgroundColor = .red
         }
-        let navH = ZSHUDManager.shared().config.navBarHeight
+        let navH = ZSHUDConfig.default().navBarHeight
         button.frame = CGRect.init(x: 0, y: 0, width: self.navWindow.frame.size.width, height: navH!)
         button.setTitle(str, for: .normal)
         button.titleLabel?.font = UIFont.boldSystemFont(ofSize: 15)
@@ -239,7 +230,7 @@ extension ZSHUDManager {
 
     }
     func navDisMiss() {
-        DispatchQueue.main.asyncAfter(deadline: DispatchTime.now() + ZSHUDManager.shared().config.messageDelay) { [unowned self] in
+        DispatchQueue.main.asyncAfter(deadline: DispatchTime.now() + ZSHUDConfig.default().messageDelay) { [weak self] in
             //            if let constraints = self.navBar?.constraints{
             //                for con in constraints {
             //                    if con.firstAttribute == .height  {
@@ -249,17 +240,21 @@ extension ZSHUDManager {
             //                }
             //            }
             //            self.navBar?.setNeedsLayout()
-            UIView.animate(withDuration: ZSHUDManager.shared().config.animationNavTime, animations: {
-                for view in self.navWindow.subviews {
-                    view.frame.origin.y = -ZSHUDManager.shared().config.navBarHeight
+            UIView.animate(withDuration: ZSHUDConfig.default().animationNavTime, animations: {
+                if let subViews = self?.navWindow?.subviews{
+                    subViews.forEach {
+                        $0.frame.origin.y = -ZSHUDConfig.default().navBarHeight
+                    }
                 }
+                
 
-            }) { [unowned self] (finshed) in
-
-                for view in self.navWindow.subviews {
-                    view.removeFromSuperview()
+            }) { [weak self] (finshed) in
+                if let subViews = self?.navWindow?.subviews{
+                    subViews.forEach {
+                        $0.removeFromSuperview();
+                    }
                 }
-                self.navBar = nil
+                self?.navBar = nil
             }
 
 

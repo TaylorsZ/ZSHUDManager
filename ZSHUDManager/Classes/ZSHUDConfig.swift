@@ -26,9 +26,6 @@ func ZSHEXCOLOR(_ rgbValue: Int) -> UIColor {
 
 let kZSDismissNotification = "kZSDismissNotification"
 
-
-
-
 open class ZSHUDConfig: NSObject {
     ///背景色
     public var bgColor:UIColor!
@@ -103,9 +100,25 @@ open class ZSHUDConfig: NSObject {
         self.animationTime = 0.15
         self.animationNavTime = 0.5
         self.loadingDefaultTips = "加载中..."
-        self.navBarHeight = 40
+        self.navBarHeight = 60
         self.statusBarHidden = true
     }
+    private static var _sharedInstance: ZSHUDConfig?
     
+    public class func `default`() -> ZSHUDConfig {
+        guard let instance = _sharedInstance else {
+            _sharedInstance = ZSHUDConfig()
+            return _sharedInstance!
+        }
+        return instance
+    }
+    
+    //销毁单例对象
+    class func destroy() {
+        _sharedInstance = nil
+    }
+    deinit {
+        print("销毁Config")
+    }
     
 }

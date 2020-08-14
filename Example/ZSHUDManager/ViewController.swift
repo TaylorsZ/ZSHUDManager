@@ -12,7 +12,7 @@ class ViewController: UIViewController {
 
     override func viewDidLoad() {
         super.viewDidLoad()
-//        ZSHUD.config.alpha = 0.6
+        ZSHUDConfig.default().loadingImages = ["234.png"]
     }
     @IBAction func show(_ sender: UIButton) {
         print("点击")
@@ -35,7 +35,7 @@ class ViewController: UIViewController {
             ZSHUDManager.shared().dismiss()
         }
         
-//        ZSHUD.nav_showSuccess("哈哈哈哈哈哈哈")
+        ZSHUDManager.shared().nav_showFail("哈哈哈哈哈哈哈")
 //        DispatchQueue.main.asyncAfter(deadline: .now() + 1) {
 //            ZSHUDManager.destroy()
 //        }

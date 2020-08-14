@@ -17,7 +17,7 @@ extension ZSBaseContentView {
         topView = loadingView
         var tips = tip
         if (tips == nil || tips?.count == 0) {
-            tips = ZSHUDManager.shared().config.loadingDefaultTips
+            tips = ZSHUDConfig.default().loadingDefaultTips
         }
         
         
@@ -31,7 +31,7 @@ extension ZSBaseContentView {
     func creatLoadingTimer() {
         timer?.invalidate()
         timer = nil
-        timer = Timer(timeInterval: ZSHUDManager.shared().config.loadingDelay, target: self, selector: #selector(dismiss), userInfo: nil, repeats: false)
+        timer = Timer(timeInterval: ZSHUDConfig.default().loadingDelay, target: self, selector: #selector(dismiss), userInfo: nil, repeats: false)
         RunLoop.current.add(timer!, forMode: RunLoop.Mode.common)
     }
     func setTip(_ tip: String?, sub: String? ,cancle:Bool) {
@@ -56,7 +56,7 @@ extension ZSBaseContentView {
             subLabel?.text = sub
             setConstraint()
             topView?.layoutIfNeeded()
-            UIView.animate(withDuration: ZSHUDManager.shared().config.animationTime, animations: {
+            UIView.animate(withDuration: ZSHUDConfig.default().animationTime, animations: {
                 self.layoutIfNeeded()
             })
             
@@ -66,7 +66,7 @@ extension ZSBaseContentView {
     }
     func loadImages() -> [UIImage] {
         
-        guard let images = ZSHUDManager.shared().config.loadingImages else {
+        guard let images = ZSHUDConfig.default().loadingImages else {
             return []
         }
         var imagesM: [UIImage] = []
@@ -81,7 +81,7 @@ extension ZSBaseContentView {
     }
     func loadingView() -> UIView{
         
-        if let images = ZSHUDManager.shared().config.loadingImages, images.count > 0 {
+        if let images = ZSHUDConfig.default().loadingImages, images.count > 0 {
             let aniImageView = UIImageView(frame: CGRect(x: 0, y: 0, width: 40, height: 40))
             aniImageView.animationImages = loadImages()
             aniImageView.animationDuration = 1
@@ -91,7 +91,7 @@ extension ZSBaseContentView {
         } else {
             let loadingView = UIActivityIndicatorView()
             loadingView.style = .whiteLarge
-            loadingView.color = ZSHUDManager.shared().config.loadingColor
+            loadingView.color = ZSHUDConfig.default().loadingColor
             loadingView.hidesWhenStopped = true
             loadingView.startAnimating()
             return loadingView
